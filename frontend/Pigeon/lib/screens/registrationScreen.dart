@@ -6,7 +6,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-
 import 'loginScreen.dart';
 import 'optScreen.dart';
 
@@ -31,7 +30,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   String name;
   String phone;
-
   File _imageFile;
   bool isFile = false;
   String localRes;

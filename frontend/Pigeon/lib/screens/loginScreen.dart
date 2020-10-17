@@ -35,6 +35,41 @@ class _LoginScreenState extends State<LoginScreen> {
   void _sendReq() {
     http.post(nodeEndPoint + "/api/user/login",
         body: {"phoneNo": _phoneTextController.text}).then((res) {
+      if (res.statusCode == 400)
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: Text(
+                  res.body,
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text(
+                      "Create an account",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RegistrationScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  FlatButton(
+                    child: Text(
+                      "Ok",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            });
       print(res.statusCode);
       // res.headers.forEach((k, v) => print('$k: $v'));
       jsonData = json.decode(res.body);
@@ -113,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             TextFormField(
                               controller: _phoneTextController,
-                              showCursor: true,
+                              showCursor: false,
                               readOnly: true,
                               keyboardType: TextInputType.phone,
                               maxLength: 10,

@@ -7,7 +7,8 @@ final Color logoColor = Color(0xff25D366);
 // Connection data
 
 // My IPv4 : 192.168.0.108
-final String nodeEndPoint = 'http://192.168.0.108:3000';
+// final String nodeEndPoint = 'http://192.168.0.108:3000';
+final String nodeEndPoint = 'https://woinbo.herokuapp.com';
 
 class MyColors {
   static const Color primaryColor = Color(0xFF503E9D);

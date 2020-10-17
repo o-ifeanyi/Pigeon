@@ -18,13 +18,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  var json;
-
   @override
   void initState() {
     super.initState();
     _getData();
   }
+
+  var json;
 
   Future<void> _getData() async {
     http.get(
