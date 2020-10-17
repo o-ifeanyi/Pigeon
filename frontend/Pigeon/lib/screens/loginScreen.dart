@@ -1,5 +1,4 @@
 import 'package:Pigeon/constants.dart';
-import 'package:Pigeon/screens/post.dart';
 import 'package:Pigeon/screens/registrationScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

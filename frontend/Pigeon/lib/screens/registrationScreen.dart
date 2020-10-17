@@ -68,33 +68,40 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   var jsonData;
 
-  void _upload() {
+  Future<void> _upload() async {
     if (_imageFile == null) return;
     String base64Image = base64Encode(_imageFile.readAsBytesSync());
     // String _fileName = _imageFile.path.split("/").last;
-
-    http.post(nodeEndPoint + "/api/user/registration",
-        body: {"name": name, "img": base64Image, "phoneNo": phone}).then((res) {
-      print(res.statusCode);
-      jsonData = json.decode(res.body);
-      localRes = res.statusCode.toString();
-      localResOk = res.body.toString();
-      if (localRes == "200" || localResOk == jsonData['body']) {
-        print(jsonData['otp']);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => OtpVerifyScreen(
-              name: name,
-              otp: jsonData['otp'],
-              phone: phone,
+    try {
+      http.post(nodeEndPoint + "/api/user/registration", body: {
+        "name": name,
+        "img": base64Image,
+        "phoneNo": phone
+      }).then((res) async {
+        print(res.statusCode);
+        jsonData = await json.decode(res.body);
+        localRes = res.statusCode.toString();
+        localResOk = res.body.toString();
+        if (localRes == "200" || localResOk == jsonData['body']) {
+          print(jsonData['otp']);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OtpVerifyScreen(
+                authToken: res.headers['auth-token'],
+                name: name,
+                otp: jsonData['otp'],
+                phone: phone,
+              ),
             ),
-          ),
-        );
-      }
-    }).catchError((err) {
+          );
+        }
+      }).catchError((err) {
+        print(err);
+      });
+    } catch (err) {
       print(err);
-    });
+    }
   }
 
   @override

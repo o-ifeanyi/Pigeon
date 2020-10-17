@@ -24,9 +24,11 @@ app.use("/api/img",getPostRoute);
 
 // DB connection
 mongoose.connect(
-  "mongodb://localhost:27017/asd",
+   process.env.MONGODB_URL,
+  // "mongodb://localhost:27017/asd",
   { useNewUrlParser: true, useUnifiedTopology: true },
-  () => {
+  (err,res) => {
+    if(err) return console.log(err);
     console.log("connected to database");
   }
 );
@@ -49,5 +51,5 @@ app.get("/getImage", (req, res) => {
 });
 
 
-
-app.listen(3000, () => console.log("server is up and running"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("server is up and running " + PORT));

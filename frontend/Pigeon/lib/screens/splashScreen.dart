@@ -16,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   startTimer() async {
-    var duration = new Duration(seconds: 6);
+    var duration = new Duration(seconds: 2);
     return new Timer(duration, () {
       Navigator.push(
         context,
@@ -48,7 +48,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     startTimer();
   }
