@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../constants.dart';
 
 Widget onlineMissedCallStatus(
-    bool isonline, bool isMissedCall, bool haveStatus) {
+    bool isOnline, bool isMissedCall, bool haveStatus) {
   if (isMissedCall) {
     return Positioned(
       top: haveStatus ? 40.0 : 34,
@@ -25,7 +25,7 @@ Widget onlineMissedCallStatus(
         ),
       ),
     );
-  } else if (isonline) {
+  } else if (isOnline) {
     return Positioned(
       top: haveStatus ? 40.0 : 38,
       left: haveStatus ? 40.0 : 38,

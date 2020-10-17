@@ -122,7 +122,7 @@ router.post("/login", async (_req, res, next) => {
   if (error) return res.status(400).send(error.details[0].message);
   // check email in database if it exist
   const user = await User.findOne({ phoneNo: _req.body.phoneNo });
-  if (!user) return res.status(400).send("Phone doesn't exist!");
+  if (!user) return res.status(404).send("The phone number doesn't exist.");
 
   const OTP = Math.floor(100000 + Math.random() * 900000);
   console.log(OTP);

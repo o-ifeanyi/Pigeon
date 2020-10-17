@@ -79,6 +79,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         "phoneNo": phone
       }).then((res) async {
         print(res.statusCode);
+        print(res.body);
         jsonData = await json.decode(res.body);
         localRes = res.statusCode.toString();
         localResOk = res.body.toString();

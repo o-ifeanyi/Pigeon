@@ -35,6 +35,26 @@ class _LoginScreenState extends State<LoginScreen> {
   void _sendReq() {
     http.post(nodeEndPoint + "/api/user/login",
         body: {"phoneNo": _phoneTextController.text}).then((res) {
+      if (res.statusCode == 404)
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: Text(res.body + "\nClick here to register."),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text(
+                      "Ok",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            });
+      print(res.body);
       print(res.statusCode);
       // res.headers.forEach((k, v) => print('$k: $v'));
       jsonData = json.decode(res.body);
@@ -52,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         );
-      }
+      } else {}
     }).catchError((err) {
       print(err);
     });
