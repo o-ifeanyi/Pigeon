@@ -127,9 +127,8 @@ router.post("/login", async (_req, res, next) => {
   const OTP = Math.floor(100000 + Math.random() * 900000);
   console.log(OTP);
   try {
-    res.status(200).json({ body: "OK", otp: OTP, name: user.name });
     const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
-    res.header('auth-token', token).send(token);
+    res.status(200).header('auth-token', token).json({ body: "OK", otp: OTP, name: user.name });
     return next();
   } catch (error) { 
     console.error(error);

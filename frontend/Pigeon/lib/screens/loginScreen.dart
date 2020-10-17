@@ -1,4 +1,5 @@
 import 'package:Pigeon/constants.dart';
+import 'package:Pigeon/screens/post.dart';
 import 'package:Pigeon/screens/registrationScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -36,17 +37,16 @@ class _LoginScreenState extends State<LoginScreen> {
     http.post(nodeEndPoint + "/api/user/login",
         body: {"phoneNo": _phoneTextController.text}).then((res) {
       print(res.statusCode);
-      res.headers.forEach((k, v) => print('$k: $v'));
-
+      // res.headers.forEach((k, v) => print('$k: $v'));
       jsonData = json.decode(res.body);
       localRes = res.statusCode.toString();
       localResOk = res.body.toString();
       if (localRes == "200" || localResOk == jsonData['body']) {
-        print(jsonData['otp']);
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => OtpVerifyScreen(
+              authToken: res.headers['auth-token'],
               name: jsonData['name'],
               otp: jsonData['otp'],
               phone: phone,

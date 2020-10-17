@@ -2,15 +2,19 @@ import 'package:Pigeon/screens/homeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:numeric_keyboard/numeric_keyboard.dart';
-
 import '../constants.dart';
 
 class OtpVerifyScreen extends StatefulWidget {
+  final String authToken;
   final String name;
   final int otp;
   final String phone;
   const OtpVerifyScreen(
-      {Key key, @required this.otp, @required this.name, @required this.phone})
+      {Key key,
+      @required this.otp,
+      @required this.name,
+      @required this.phone,
+      @required this.authToken})
       : super(key: key);
   @override
   _OtpVerifyScreenState createState() => _OtpVerifyScreenState();
@@ -172,7 +176,8 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                             ? Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => HomeScreen(),
+                                  builder: (context) =>
+                                      HomeScreen(authToken: widget.authToken),
                                 ),
                               )
                             : print("Wrong OTP");

@@ -1,11 +1,42 @@
+import 'dart:convert';
 import 'dart:ui';
 import 'package:Pigeon/models/Users.dart';
 import 'package:Pigeon/widgets/menuButton.dart';
 import 'package:Pigeon/widgets/userChats.dart';
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
 import '../constants.dart';
+import 'package:http/http.dart' as http;
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  final String authToken;
+
+  const HomeScreen({Key key, this.authToken}) : super(key: key);
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  var json;
+
+  @override
+  void initState() {
+    super.initState();
+    _getData();
+  }
+
+  Future<void> _getData() async {
+    http.get(
+      nodeEndPoint + "/api/posts",
+      headers: {
+        "auth-token": widget.authToken,
+      },
+    ).then((res) async => {
+          json = jsonDecode(res.body),
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +72,10 @@ class HomeScreen extends StatelessWidget {
       bottomNavigationBar: menuButtons(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Toast.show(json['name'], context,
+              duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
+        },
         tooltip: 'Create/Add: Contacts,status,group',
         child: Icon(
           Icons.add,
