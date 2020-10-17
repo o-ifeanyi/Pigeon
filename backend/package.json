@@ -8,6 +8,9 @@
   },
   "author": "WOINBO",
   "license": "ISC",
+  "engines": {
+    "node": "12.18.40"
+  },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "bcryptjs": "^2.4.3",
