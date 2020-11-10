@@ -4,7 +4,7 @@
 <p>Hello I'm Pigeon, I will guide you all and introduce you all to my self😄.</p>
 
 <p>OKK! So, what I am? And what I am for?</p>
-<p>I'm a real-time chatting app developed by [#woinbo](www.github.com/woinbo) using awesome technologies such as [Flutter](flutter.dev), Node-js, MongoDB, SocketIO, rest APIs, and much more.....</p>
+<p>I'm a real-time chatting app developed by [woinbo](www.github.com/woinbo) using awesome technologies such as [Flutter](www.flutter.dev), Node-js, MongoDB, SocketIO, rest APIs, and much more.....</p>
 
 ### Features
    * Splash Screen
