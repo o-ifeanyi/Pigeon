@@ -1,3 +1,4 @@
+import 'package:Pigeon/models/Users.dart';
 import 'package:Pigeon/screens/homeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -5,15 +6,19 @@ import 'package:numeric_keyboard/numeric_keyboard.dart';
 import '../constants.dart';
 
 class OtpVerifyScreen extends StatefulWidget {
+  static const String otpPageRoute = "OTP_PAGE_ROUTE";
   final String authToken;
   final String name;
   final int otp;
   final String phone;
+  final Users me;
+
   const OtpVerifyScreen(
       {Key key,
       @required this.otp,
       @required this.name,
       @required this.phone,
+      this.me,
       @required this.authToken})
       : super(key: key);
   @override
@@ -58,26 +63,26 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-              color: MyColors.primaryColorLight.withAlpha(20),
-            ),
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: MyColors.primaryColor,
-              size: 16,
-            ),
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.white,
-        brightness: Brightness.light,
-      ),
+      // appBar: AppBar(
+      // leading: IconButton(
+      //   icon: Container(
+      //     padding: const EdgeInsets.all(10),
+      //     decoration: BoxDecoration(
+      //       borderRadius: const BorderRadius.all(Radius.circular(20)),
+      //       color: MyColors.primaryColorLight.withAlpha(20),
+      //     ),
+      //     child: Icon(
+      //       Icons.arrow_back_ios,
+      //       color: MyColors.primaryColor,
+      //       size: 16,
+      //     ),
+      //   ),
+      //   onPressed: () => Navigator.of(context).pop(),
+      // ),
+      //   elevation: 0,
+      //   backgroundColor: Colors.white,
+      //   brightness: Brightness.light,
+      // ),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -123,6 +128,13 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                                   style: TextStyle(
                                     color: Colors.grey.shade800,
                                     fontWeight: FontWeight.w200,
+                                  ),
+                                ),
+                                Text(
+                                  widget.otp.toString(),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade400,
+                                    fontWeight: FontWeight.w100,
                                   ),
                                 ),
                               ],
@@ -176,12 +188,12 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                             ? Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      HomeScreen(authToken: widget.authToken),
+                                  builder: (context) => HomeScreen(
+                                      authToken: widget.authToken,
+                                      me: widget.me),
                                 ),
                               )
                             : print("Wrong OTP");
-                        // loginStore.validateOtpAndLogin(context, text);
                       },
                       color: MyColors.primaryColor,
                       shape: const RoundedRectangleBorder(

@@ -1,4 +1,5 @@
 import 'package:Pigeon/constants.dart';
+import 'package:Pigeon/widgets/auth/authWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
@@ -17,14 +18,17 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController _textEditingController;
+  TextEditingController _phoneEditingController;
+  TextEditingController _nameEditingController;
   void initState() {
     super.initState();
-    _textEditingController = TextEditingController();
+    _phoneEditingController = TextEditingController();
+    _nameEditingController = TextEditingController();
   }
 
   void dispose() {
-    _textEditingController.dispose();
+    _phoneEditingController.dispose();
+    _nameEditingController.dispose();
     super.dispose();
   }
 
@@ -67,15 +71,51 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   var jsonData;
 
   Future<void> _upload() async {
-    if (_imageFile == null) return;
-    String base64Image = base64Encode(_imageFile.readAsBytesSync());
+    // if (_imageFile == null) return;
+    String base64Image =
+        _imageFile == null ? "" : base64Encode(_imageFile.readAsBytesSync());
     // String _fileName = _imageFile.path.split("/").last;
     try {
       http.post(nodeEndPoint + "/api/user/registration", body: {
         "name": name,
-        "img": base64Image,
+        "img": base64Image.isEmpty ? "empty" : base64Image,
         "phoneNo": phone
       }).then((res) async {
+        if (res.statusCode == 400)
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  content: Text(
+                    res.body,
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text(
+                        "Login here",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    FlatButton(
+                      child: Text(
+                        "Ok",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              });
         print(res.statusCode);
         jsonData = await json.decode(res.body);
         localRes = res.statusCode.toString();
@@ -192,58 +232,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            TextFormField(
-                              keyboardType: TextInputType.name,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your Name';
-                                }
-                                return null;
-                              },
-                              onChanged: (value) {
-                                name = value;
-                              },
-                              decoration: InputDecoration(
-                                hintText: "Name",
-                                border: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.amber,
-                                  ),
-                                ),
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0xff481984),
-                                  ),
-                                ),
-                                // helperText:
-                                //     _showHint ? "Nice name " + name + "!" : "",
-                                labelText: 'Name',
-                              ),
-                            ),
-                            TextFormField(
-                              keyboardType: TextInputType.phone,
-                              maxLength: 10,
-                              // controller: _textEditingController,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your Phone Number';
-                                }
-                                return null;
-                              },
-                              onChanged: (value) {
-                                phone = value;
-                              },
-                              decoration: InputDecoration(
-                                hintText: "Phone Number",
-                                border: UnderlineInputBorder(),
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0xff481984),
-                                  ),
-                                ),
-                                labelText: 'Phone',
-                              ),
-                            ),
+                            dataText(
+                                editingController: _nameEditingController,
+                                keyType: TextInputType.name,
+                                label: "Name",
+                                errMsg: "Please Enter your Name."),
+                            dataText(
+                                editingController: _phoneEditingController,
+                                keyType: TextInputType.phone,
+                                label: "Phone",
+                                isPhone: true,
+                                errMsg: "Please Enter your Mobile no."),
                             Container(
                               margin: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 10),
@@ -251,6 +250,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               child: RaisedButton(
                                 onPressed: () {
                                   if (_formKey.currentState.validate()) {
+                                    name = _nameEditingController.text;
+                                    phone = _phoneEditingController.text;
+                                    print(phone);
                                     _upload();
                                   }
                                 },

@@ -1,9 +1,15 @@
 import 'dart:async';
 import 'package:Pigeon/constants.dart';
+import 'package:Pigeon/screens/homeScreen.dart';
 import 'package:Pigeon/screens/registrationScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+// bool isLoggedIn = false;
+String authToken;
 
 class SplashScreen extends StatefulWidget {
+  static const String splashPageRoute = "SPLASH_PAGE_ROUTE";
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -12,18 +18,28 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    isLoggedIn();
     startTimer();
   }
 
   startTimer() async {
     var duration = new Duration(seconds: 2);
     return new Timer(duration, () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => RegistrationScreen(),
-        ),
-      );
+      authToken == ""
+          ? Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RegistrationScreen(),
+              ),
+            )
+          : Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomeScreen(
+                  authToken: authToken,
+                ),
+              ),
+            );
     });
   }
 
@@ -51,4 +67,10 @@ class _SplashScreenState extends State<SplashScreen> {
     super.dispose();
     startTimer();
   }
+}
+
+isLoggedIn() async {
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  // isLoggedIn = sharedPreferences.getBool("IS_LOGGED_IN") ?? false;
+  authToken = sharedPreferences.getString("AUTH_TOKEN") ?? "";
 }

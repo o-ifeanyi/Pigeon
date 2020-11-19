@@ -1,4 +1,5 @@
 import 'package:Pigeon/constants.dart';
+import 'package:Pigeon/models/Users.dart';
 import 'package:Pigeon/screens/registrationScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,64 +34,70 @@ class _LoginScreenState extends State<LoginScreen> {
   var jsonData;
 
   void _sendReq() {
-    http.post(nodeEndPoint + "/api/user/login",
-        body: {"phoneNo": _phoneTextController.text}).then((res) {
-      if (res.statusCode == 400)
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                content: Text(
-                  res.body,
-                ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text(
-                      "Create an account",
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RegistrationScreen(),
-                        ),
-                      );
-                    },
+    CircularProgressIndicator();
+    try {
+      http.post(nodeEndPoint + "/api/user/login",
+          body: {"phoneNo": _phoneTextController.text}).then((res) {
+        if (res.statusCode == 400)
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  content: Text(
+                    res.body,
                   ),
-                  FlatButton(
-                    child: Text(
-                      "Ok",
-                      style: TextStyle(color: Colors.black),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text(
+                        "Create an account",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RegistrationScreen(),
+                          ),
+                        );
+                      },
                     ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            });
-      print(res.statusCode);
-      // res.headers.forEach((k, v) => print('$k: $v'));
-      jsonData = json.decode(res.body);
-      localRes = res.statusCode.toString();
-      localResOk = res.body.toString();
-      if (localRes == "200" || localResOk == jsonData['body']) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => OtpVerifyScreen(
-              authToken: res.headers['auth-token'],
-              name: jsonData['name'],
-              otp: jsonData['otp'],
-              phone: phone,
+                    FlatButton(
+                      child: Text(
+                        "Ok",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              });
+        print(res.body.toString());
+        // res.headers.forEach((k, v) => print('$k: $v'));
+        print(res.headers);
+        jsonData = json.decode(res.body);
+        localRes = res.statusCode.toString();
+        localResOk = res.body.toString();
+        if (localRes == "200" || localResOk == jsonData['body']) {
+          print(">>>>> user " + jsonData['user']['name']);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OtpVerifyScreen(
+                authToken: res.headers['auth-token'],
+                name: jsonData['user']['name'],
+                otp: jsonData['otp'],
+                phone: phone,
+                me: Users.fromJson(jsonData['user']),
+              ),
             ),
-          ),
-        );
-      }
-    }).catchError((err) {
+          );
+        }
+      });
+    } catch (err) {
       print(err);
-    });
+    }
   }
 
   @override
@@ -175,7 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   horizontal: 20, vertical: 10),
                               constraints: const BoxConstraints(maxWidth: 500),
                               child: RaisedButton(
-                                onPressed: () {
+                                onPressed: () async {
                                   if (_formKey.currentState.validate()) {
                                     _sendReq();
                                   }

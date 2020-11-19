@@ -1,12 +1,17 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:Pigeon/models/Users.dart';
+import 'package:Pigeon/screens/chatScreen.dart';
 import 'package:Pigeon/screens/storyView.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:Pigeon/screens/videoCallScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:Pigeon/configs/assets.dart';
 
 import '../constants.dart';
 
 Widget onlineMissedCallStatus(
-    bool isonline, bool isMissedCall, bool haveStatus) {
+    bool isOnline, bool isMissedCall, bool haveStatus) {
   if (isMissedCall) {
     return Positioned(
       top: haveStatus ? 40.0 : 34,
@@ -25,7 +30,7 @@ Widget onlineMissedCallStatus(
         ),
       ),
     );
-  } else if (isonline) {
+  } else if (isOnline) {
     return Positioned(
       top: haveStatus ? 40.0 : 38,
       left: haveStatus ? 40.0 : 38,
@@ -43,7 +48,8 @@ Widget onlineMissedCallStatus(
   }
 }
 
-Widget userChats(index, context) {
+Widget userChats(context, Users friend) {
+  Uint8List decodedBase64ImgOfFriend = base64.decode(friend.imgURL);
   return Dismissible(
     // ignore: missing_return
     confirmDismiss: (direction) async {
@@ -52,12 +58,11 @@ Widget userChats(index, context) {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                content: Text(
-                    "Are you sure you want to delete ${user[index].name}?"),
+                content: Text("Make an audio call to ${friend.name}?"),
                 actions: <Widget>[
                   FlatButton(
                     child: Text(
-                      "Cancel",
+                      "no, cancel it",
                       style: TextStyle(color: Colors.black),
                     ),
                     onPressed: () {
@@ -66,21 +71,59 @@ Widget userChats(index, context) {
                   ),
                   FlatButton(
                     child: Text(
-                      "Delete",
+                      "Yes, sure",
                       style: TextStyle(color: Colors.red),
                     ),
                     onPressed: () {
-                      // setState(() {
-                      //   itemsList.removeAt(index);
-                      // });
                       Navigator.of(context).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => VideoCallScreen(),
+                        ),
+                      );
                     },
                   ),
                 ],
               );
             });
         return res;
-      } else {}
+      } else {
+        final bool res = await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: Text("Make a video call to ${friend.name}?"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text(
+                      "no, cancel it",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  FlatButton(
+                    child: Text(
+                      "Yes, sure",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => VideoCallScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              );
+            });
+        return res;
+      }
     },
     background: Container(
       color: Color(0xffF3F3F3),
@@ -128,113 +171,215 @@ Widget userChats(index, context) {
         alignment: Alignment.centerRight,
       ),
     ),
-    key: Key(user[index].name),
-    child: Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(
-          Radius.circular(20),
+    key: Key(friend.name),
+    child: GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ChatScreen(friend: friend),
         ),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 26.0, vertical: 13.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Stack(
-                children: [
-                  CircleAvatar(
-                    radius: user[index].haveStatus ? 29 : 26,
-                    backgroundColor: logoColor,
-                    child: CircleAvatar(
-                      radius: user[index].haveStatus ? 28 : 26,
-                      backgroundColor:
-                          user[index].haveStatus ? Colors.white : null,
-                      child: GestureDetector(
-                        onTap: () {
-                          // Toast.show("Will show user pic", context,
-                          //     duration: Toast.LENGTH_LONG,
-                          //     gravity: Toast.CENTER);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => StoryViewer()),
-                          );
-                        },
-                        child: CircleAvatar(
-                          radius: 26.0,
-                          backgroundColor: Colors.white,
-                          backgroundImage: AssetImage(
-                            user[index].imgURL,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(
+            Radius.circular(20),
+          ),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 26.0, vertical: 13.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: friend.haveStatus ? 29 : 26,
+                      backgroundColor: logoColor,
+                      child: CircleAvatar(
+                        radius: friend.haveStatus ? 28 : 26,
+                        backgroundColor:
+                            friend.haveStatus ? Colors.white : null,
+                        child: GestureDetector(
+                          onTap: () {
+                            friend.haveStatus
+                                ? Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => StoryViewer()),
+                                  )
+                                : showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Center(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
+                                            color: Colors.white,
+                                          ),
+                                          height: MediaQuery.of(context)
+                                                  .devicePixelRatio *
+                                              107,
+                                          width: MediaQuery.of(context)
+                                                  .devicePixelRatio *
+                                              90,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(20),
+                                                ),
+                                                child: Image.asset(
+                                                  "assets/images/people/Ankit_sagar_4027f99669eac45eae5027722524d2caa37d0c1b.jpeg",
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              ),
+
+                                              // Image.memory(
+                                              //   decodedBase64ImgOfFriend,
+                                              // ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: null,
+                                                    child: Container(
+                                                      height: 50,
+                                                      width: 50,
+                                                      child: Center(
+                                                        child: Image.asset(
+                                                          Assets.audioCall,
+                                                          scale: 5,
+                                                          color: MyColors
+                                                              .primaryColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  GestureDetector(
+                                                    onTap: () =>
+                                                        {print("video")},
+                                                    child: Container(
+                                                      height: 50,
+                                                      width: 50,
+                                                      child: Center(
+                                                        child: Image.asset(
+                                                          Assets.videoCall,
+                                                          scale: 5,
+                                                          color: MyColors
+                                                              .primaryColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  GestureDetector(
+                                                    onTap: null,
+                                                    child: Container(
+                                                      height: 50,
+                                                      width: 50,
+                                                      child: Center(
+                                                        child: Image.asset(
+                                                          Assets.forward,
+                                                          scale: 4,
+                                                          color: MyColors
+                                                              .primaryColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    });
+                          },
+                          child: CircleAvatar(
+                            radius: 26.0,
+                            backgroundColor: Colors.white,
+                            backgroundImage: AssetImage(
+                                "assets/images/people/Ankit_sagar_4027f99669eac45eae5027722524d2caa37d0c1b.jpeg"),
+                            // Image.memory(
+                            //   decodedBase64ImgOfFriend,
+                            // ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  onlineMissedCallStatus(
-                      user[index].isOnline,
-                      user[index].isMissedCall,
-                      user[index].haveStatus), // Is Online Function
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // sender Name
-                    Text(
-                      user[index].name,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w900, color: primaryColor),
-                    ),
-                    SizedBox(
-                      height: 3.0,
-                    ),
-                    // Messages
-                    Text(
-                      user[index].msg,
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                    // Last seen
-                    Text(
-                      '02:53 PM',
-                      style: TextStyle(color: Colors.grey[400]),
-                    ),
+                    onlineMissedCallStatus(friend.isOnline, friend.isMissedCall,
+                        friend.haveStatus), // Is Online Function
                   ],
                 ),
-              ),
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              user[index].isRead
-                  ? Container(
-                      child: Text(''),
-                    )
-                  : Container(
-                      alignment: Alignment.center,
-                      height: 18.0,
-                      width: 18.0,
-                      child: Text(
-                        user[index].noOfMsgUnRead,
-                        style: TextStyle(color: Colors.white, fontSize: 10.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // sender Name
+                      Text(
+                        friend.name,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            color: Colors.grey[800]),
                       ),
-                      decoration: BoxDecoration(
-                          color: Color(0xff2AD266),
-                          borderRadius: BorderRadius.circular(20)),
-                    ),
-              SizedBox(
-                height: 6.0,
-              ),
-              Text(
-                user[index].time,
-                style: TextStyle(color: Colors.grey, fontSize: 10.0),
-              ),
-            ],
-          ),
-        ],
+                      SizedBox(
+                        height: 3.0,
+                      ),
+                      // Messages
+                      Text(
+                        //TODO: update this chat show at user as last msg
+                        // chat[chat.length - 1].msg.substring(0, 20) + "...",
+                        "Hello brother",
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                      // Last seen
+                      Text(
+                        friend.time,
+                        style: TextStyle(color: Colors.grey[400]),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                friend.isRead
+                    ? Container(
+                        child: Text(''),
+                      )
+                    : Container(
+                        alignment: Alignment.center,
+                        height: 18.0,
+                        width: 18.0,
+                        child: Text(
+                          friend.noOfMsgUnRead,
+                          style: TextStyle(color: Colors.white, fontSize: 10.0),
+                        ),
+                        decoration: BoxDecoration(
+                            color: MyColors.primaryColor,
+                            // color: Color(0xff2AD266),
+                            borderRadius: BorderRadius.circular(20)),
+                      ),
+                SizedBox(
+                  height: 6.0,
+                ),
+                Text(
+                  friend.time,
+                  style: TextStyle(color: Colors.grey, fontSize: 10.0),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     ),
   );
