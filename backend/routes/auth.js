@@ -1,20 +1,18 @@
 const router = require("express").Router();
 const schema = require("../validation");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const fs = require("fs");
 const User = require("../models/user");
 
-// router.get("/getImage", (req, res) => {
-//   User.find((err, result) => {
-//     try {
-//       const result_f = result;
-//       res.send("<img src=" + result_f[1].img + "></img>");
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   });
-// });
+router.get("/getImage", (req, res) => {
+  User.find((err, result) => {
+    try {
+      const result_f = result;
+      res.send("<img src=" + result_f[1].img + "></img>");
+    } catch (error) {
+      console.log(error);
+    }
+  });
+});
 
 router.post("/registration", async (req, res) => {
   //check for error
@@ -92,7 +90,14 @@ router.post("/registration", async (req, res) => {
         function () {
           const user = new User({
             name: name,
-            img: uniqueRandomImageName + "." + imageTypeDetected[1],
+            img: img,
+            // img: uniqueRandomImageName + "." + imageTypeDetected[1],
+            isRead: false,
+            isOnline: false,
+            isMissedCall: false,
+            haveStatus: false,
+            noOfMsgUnRead: "5",
+            time: null,
             OTP: OTP,
             phoneNo: phoneNo,
           });
@@ -128,9 +133,13 @@ router.post("/login", async (_req, res, next) => {
   console.log(OTP);
   try {
     const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
-    res.status(200).header('auth-token', token).json({ body: "OK", otp: OTP, name: user.name });
+    res.status(200).header("auth-token", token).json({
+      body: "OK",
+      otp: OTP,
+      user: user,
+    });
     return next();
-  } catch (error) { 
+  } catch (error) {
     console.error(error);
     try {
       res.status(500).json({ error: error });

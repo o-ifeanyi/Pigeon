@@ -1,3 +1,4 @@
+const { boolean } = require("@hapi/joi");
 const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema({
   name: {
@@ -12,6 +13,12 @@ const userSchema = new mongoose.Schema({
     max: 1024,
     min: 6,
   },
+  isRead: { type: Boolean },
+  noOfMsgUnRead: { type: String },
+  time: { type: String },
+  isMissedCall: { type: Boolean },
+  isOnline: { type: Boolean },
+  haveStatus:{type:Boolean},
   OTP: {
     type: String,
     required: true,
