@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "849492668123",
+    "firebase_url": "https://woinbo-pigeon.firebaseio.com",
+    "project_id": "woinbo-pigeon",
+    "storage_bucket": "woinbo-pigeon.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:849492668123:android:72ceae6fe8fe994d4ae6fe",
+        "android_client_info": {
+          "package_name": "io.woinbo.pigeon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "849492668123-56ed5jidiorpqf5a8ti2u5ncbuq6s155.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvcUIFMk4syRIH5W9WUckHdSwE5Ix8XS8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "849492668123-56ed5jidiorpqf5a8ti2u5ncbuq6s155.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "849492668123-pnf4i0usttt2stgpkhtgokvcba1k6p18.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.woinbo.pigeon"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
