@@ -1,15 +1,17 @@
 {
-  "name": "chat_app_backend",
+  "name": "pigeon",
   "version": "1.0.0",
-  "description": "",
+  "description": "Backend for pigeon app",
   "main": "server.js",
   "scripts": {
-    "test": "nodemon server.js",
-    "dev": "nodemon server.js"
+    "start": "nodemon server.js",
+    "dev": "node server.js"
   },
-  "keywords": [],
-  "author": "",
+  "author": "WOINBO",
   "license": "ISC",
+  "engines": {
+    "node": "12.18.4"
+  },
   "dependencies": {
     "axios": "^0.19.1",
     "bcryptjs": "^2.4.3",
@@ -20,8 +22,5 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.8.4",
     "socket.io": "^2.3.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.2"
   }
 }
